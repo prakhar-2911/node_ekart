@@ -1,8 +1,4 @@
-const path = require('path');
-
 const express = require('express');
-
-const adminData = require('./admin');
 
 const shopController = require('../controllers/shop');
 
@@ -17,11 +13,13 @@ router.get('/products/:productId', shopController.getProduct);
 router.get('/cart', shopController.getCart);
 
 router.post('/cart', shopController.postCart);
-
+ 
 router.post('/cart-delete-item', shopController.postCartDeleteProduct);
 
 router.get('/orders', shopController.getOrders);
 
+router.post('/orders', shopController.postOrder);
+
 router.get('/checkouts', shopController.getCheckout);
 
-module.exports = router;
+ module.exports = router;
