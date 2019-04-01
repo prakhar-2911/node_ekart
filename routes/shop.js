@@ -8,7 +8,7 @@ router.get('/', shopController.getIndex);
 
 router.get('/products', shopController.getProducts);
 
-router.get('/products/:productId', shopController.getProduct);
+ router.get('/products/:productId', shopController.getProduct);
 
 router.get('/cart', shopController.getCart);
 
@@ -18,8 +18,10 @@ router.post('/cart-delete-item', shopController.postCartDeleteProduct);
 
 router.get('/orders', shopController.getOrders);
 
-router.post('/orders', shopController.postOrder);
+router.post('/create-order', shopController.postOrder);
 
-router.get('/checkouts', shopController.getCheckout);
+router.get('/orders', shopController.getOrders);
+
+//router.get('/checkouts', shopController.getCheckout);
 
  module.exports = router;
