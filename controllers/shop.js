@@ -9,7 +9,7 @@ exports.getProducts = (req, res, next) => {
         {
           prods: products, 
           pageTitle: ' All Products',
-          path:'/products', 
+          path:'/products' 
           
         });
     })
@@ -28,7 +28,7 @@ exports.postOrder = (req, res, next) => {
         });
         const order = new Order({
             user: {
-                name: req.user.name,
+                email: req.user.email,
                 userId: req.user
             },
             products: products
@@ -67,7 +67,7 @@ exports.getIndex = (req, res, next) => {
 
             prods: products, 
             pageTitle: 'Shop',
-            path:'/', 
+            path:'/' 
             
         });
     }).catch(err => {
@@ -122,7 +122,7 @@ exports.getOrders = (req, res, next) => {
         {
             orders: orders,
             pageTitle: 'Your Orders',
-            path:'/orders', 
+            path:'/orders'
             
         });
     })
@@ -135,7 +135,7 @@ exports.getCheckout = (req, res, next) => {
         {
 
             pageTitle: 'Checkout',
-            path:'/checkout', 
+            path:'/checkout'
             
         }
     );
