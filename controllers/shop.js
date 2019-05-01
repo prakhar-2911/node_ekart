@@ -9,12 +9,14 @@ exports.getProducts = (req, res, next) => {
         {
           prods: products, 
           pageTitle: ' All Products',
-          path:'/products' 
+          path: '/products' 
           
         });
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
     });
 };
 
@@ -23,41 +25,44 @@ exports.postOrder = (req, res, next) => {
     .populate('cart.items.productId')
     .execPopulate()
     .then(user => {
-        const products = user.cart.items.map(i => {
-            return {product: {...i.productId._doc}, quantity: i.quantity}
-        });
+        const products = user.cart.items.map(i => 
+            ({ product: { ...i.productId._doc }, quantity: i.quantity }));
         const order = new Order({
             user: {
                 email: req.user.email,
                 userId: req.user
             },
-            products: products
+            products
         });
         return order.save();
         })
-        .then((result) => {
-            return req.user.clearCart();
-        })
+        .then(() => req.user.clearCart())
         .then(() => {
             res.redirect('/orders');
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        });
 };
     
 exports.getProduct = (req, res, next) => {
-    prodId = req.params.productId;
+    const prodId = req.params.productId;
     Product.findById(prodId)
     .then(product => {
         res.render('shop/product-detail', {
-            product: product,
+            product,
             pageTitle: product.title,
             path: '/products'
         }); 
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
     });
-}
+};
 
 exports.getIndex = (req, res, next) => {
     Product.find()
@@ -67,17 +72,18 @@ exports.getIndex = (req, res, next) => {
 
             prods: products, 
             pageTitle: 'Shop',
-            path:'/' 
+            path: '/' 
             
         });
     }).catch(err => {
-    console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
     });
-}
+};
 
 
 exports.getCart = (req, res, next) => {
-        
     req.user
     .populate('cart.items.productId')
     .execPopulate()
@@ -86,47 +92,57 @@ exports.getCart = (req, res, next) => {
         res.render('shop/cart', 
         {
             pageTitle: 'Your Cart',
-            path:'/cart', 
-            products: products
+            path: '/cart', 
+            products
         });
     })
-    .catch(err => console.log(err));    
-}
+    .catch(err => {      
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+ });    
+};
 
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findById(prodId).then(product => {
-        return req.user.addToCart(product);
-    })
-    .then(result => {
+    Product.findById(prodId).then(product => req.user.addToCart(product))
+    .then(() => {
         res.redirect('/cart');
     });
-}
+};
 
 
 exports.postCartDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
     req.user
     .removeFromCart(prodId)
-    .then(result => {
+    .then(() => {
         res.redirect('/cart');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 };
 
 exports.getOrders = (req, res, next) => {
-    Order.find({'user.userId': req.user._id})
+    Order.find({ 'user.userId': req.user._id })
     .then(orders => {
         res.render('shop/orders', 
         {
-            orders: orders,
+            orders,
             pageTitle: 'Your Orders',
-            path:'/orders'
+            path: '/orders'
             
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 };  
 
 
@@ -135,8 +151,8 @@ exports.getCheckout = (req, res, next) => {
         {
 
             pageTitle: 'Checkout',
-            path:'/checkout'
+            path: '/checkout'
             
         }
     );
-}
+};
